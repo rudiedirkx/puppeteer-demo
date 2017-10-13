@@ -3,11 +3,14 @@ const puppeteer = require('puppeteer');
 
 function pageUrl(page) {
 	console.log('    <= ' + page.url());
-	console.log('');
+	// console.log('');
 }
 
-async function screenshot(page, name) {
-	page.screenshot({path: 'x-' + name + '.png'});
+var screenshotIndex = 0;
+async function screenshot(page) {
+	const name = 'x' + (++screenshotIndex) + '.png';
+	console.log(name);
+	page.screenshot({path: name});
 }
 
 async function pageContent(page) {
@@ -21,39 +24,50 @@ async function pageContent(page) {
 
 	page.on('request', req => {
 		console.log('  => ' + req.url);
-		console.log('');
+		// console.log('');
 	});
 
-	// page.on('response', rsp => {
-	// 	console.log('  => ' + rsp.request().url);
-	// 	console.log('');
-	// });
+	page.on('load', e => {
+		// screenshot(page);
+	});
+
+	page.on('framenavigated', frame => {
+		if (frame == page.mainFrame()) {
+			setTimeout(() => {
+				console.log(frame.url());
+				screenshot(page);
+			}, 1500);
+		}
+	});
+
+	page.on('response', rsp => {
+		// screenshot(page);
+		// console.log('  => ' + rsp.request().url);
+		// console.log('');
+	});
 
 	await page.goto(cfg.baseUrl);
-	pageUrl(page);
+
+pageUrl(page);
 
 	await page.evaluate(function() {
 		document.querySelector('#login').focus();
+		document.querySelector('input[name="username"]').value = 'personeel';
+		document.querySelector('input[name="password"]').value = 'test';
 	});
-// 	var el = await page.$('#login');
-// console.log(el);
-// 	await el.focus();
-await screenshot(page, 'pre-login-1');
 
-	await page.type('input[name="username"]', 'personeel', {delay: 100});
-	await page.type('input[name="password"]', 'test', {delay: 100});
-await screenshot(page, 'pre-login-2');
+// await screenshot(page);
+
 	await page.click('#login');
+
 pageUrl(page);
-await screenshot(page, 'login');
+// await screenshot(page);
 
 	await page.goto(cfg.baseUrl + 'blockreservations');
 pageUrl(page);
-// await pageContent(page);
-await screenshot(page, 'blockreservations');
 
 
 
 
-	setTimeout(async x => await browser.close(), 500);
+	// setTimeout(async x => await browser.close(), 1000);
 })();
