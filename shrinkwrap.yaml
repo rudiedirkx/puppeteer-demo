@@ -1,5 +1,5 @@
 dependencies:
-  puppeteer: 0.11.0
+  puppeteer: 0.12.0
 packages:
   /agent-base/4.1.1:
     dependencies:
@@ -135,7 +135,7 @@ packages:
   /proxy-from-env/1.0.0:
     resolution:
       integrity: sha1-M8UDmPcOp+uW0h97gXYwpVeRx+4=
-  /puppeteer/0.11.0:
+  /puppeteer/0.12.0:
     dependencies:
       debug: 2.6.9
       extract-zip: 1.6.5
@@ -146,7 +146,7 @@ packages:
       rimraf: 2.6.2
       ws: 3.2.0
     resolution:
-      integrity: sha512-/o8uY6VChG74B1HYBZkLDU6aIekWeOd85wez9YxB9SNbDnFNsUddv2F4xWuhwvQ4ab84vb+1VX4fxs2kBz3u8g==
+      integrity: sha512-H/bylN7FccwbN7JZoSP+xRozxgJEDNy4uC4p727cyttKUVNXYjFuEMueJYHW0pblnrfLEH341SyFJVWhJMLxKQ==
   /readable-stream/2.3.3:
     dependencies:
       core-util-is: 1.0.2
@@ -198,4 +198,4 @@ packages:
 registry: 'https://registry.npmjs.org/'
 shrinkwrapVersion: 3
 specifiers:
-  puppeteer: ^0.11.0
+  puppeteer: ^0.12.0

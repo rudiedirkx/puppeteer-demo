@@ -1,4 +1,5 @@
 const cfg = require('./env.js');
+const fs = require('fs');
 const puppeteer = require('puppeteer');
 
 function pageUrl(page) {
@@ -26,13 +27,22 @@ async function pageContent(page) {
 		height: 800,
 	});
 
+	try {
+		for (var i = 1; i < 99; i++) {
+			var name = `x${i}.png`;
+			fs.unlinkSync(name);
+			console.log('deleted', name);
+		}
+	}
+	catch (ex) {}
+
 	page.on('request', req => {
 		console.log('[request] ' + req.url);
 	});
 
 	page.on('load', async () => {
 		console.log('[load] ' + page.url());
-		await screenshot(page);
+		// await screenshot(page);
 	});
 
 	// page.on('framenavigated', frame => {
@@ -51,31 +61,28 @@ async function pageContent(page) {
 	// });
 
 	await page.goto(cfg.baseUrl);
-
-// pageUrl(page);
+	await screenshot(page);
 
 	await page.evaluate(function() {
-		document.querySelector('#login').focus();
 		document.querySelector('input[name="username"]').value = 'personeel';
 		document.querySelector('input[name="password"]').value = 'test';
 	});
-
-// await screenshot(page);
-
 	await page.click('#login');
 	await page.waitForNavigation();
-
-// pageUrl(page);
-// await screenshot(page);
+	await screenshot(page);
 
 	await page.goto(cfg.baseUrl + 'blockreservations');
-	// await page.waitForNavigation();
-// pageUrl(page);
+	await screenshot(page);
 
 	var el = await page.$('a[href="/blockreservations/new"]');
 	await page.evaluate(el => el.click(), el);
-	// await el.click();
 	await page.waitForNavigation();
+	await screenshot(page);
+
+	await page.select('[name="resource_id"]', '25');
+	await page.select('[name="on_day"]', '2');
+	await page.waitFor(300);
+	await screenshot(page);
 
 
 
