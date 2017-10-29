@@ -11,12 +11,19 @@ var screenshotIndex = 0;
 async function screenshot(page) {
 	const name = 'x' + (++screenshotIndex) + '.png';
 	console.log(name);
-	page.screenshot({path: name});
+	await page.screenshot({path: name});
 }
 
 async function pageContent(page) {
 	var html = await page.content();
 	console.log(html);
+}
+
+async function waitForAjax(page, async) {
+	if (async) {
+		await page.waitForSelector('#ajax_loading', {visible: true});
+	}
+	await page.waitForSelector('#ajax_loading', {hidden: true});
 }
 
 (async () => {
@@ -63,10 +70,10 @@ async function pageContent(page) {
 	await page.goto(cfg.baseUrl);
 	await screenshot(page);
 
-	await page.evaluate(function() {
-		document.querySelector('input[name="username"]').value = 'personeel';
-		document.querySelector('input[name="password"]').value = 'test';
-	});
+	await page.type('input[name="username"]', 'personeel');
+	await page.type('input[name="password"]', 'test');
+	await screenshot(page);
+
 	await page.click('#login');
 	await page.waitForNavigation();
 	await screenshot(page);
@@ -81,11 +88,28 @@ async function pageContent(page) {
 
 	await page.select('[name="resource_id"]', '25');
 	await page.select('[name="on_day"]', '2');
-	await page.waitFor(300);
+	await page.waitForSelector('#ajax_loading', {hidden: true});
+	await screenshot(page);
+
+	await page.select('[name="start_time"]', '20:00');
+	await page.select('[name="end_time"]', '21:00');
+	await waitForAjax(page, false);
+	await screenshot(page);
+
+	await page.type('#pplayer1 .ms-txt', 'gree');
+	await waitForAjax(page, true);
+	await screenshot(page);
+
+	await page.type('#pplayer2 .ms-txt', 'geer');
+	await waitForAjax(page, true);
+	await screenshot(page);
+
+	await page.click('.button.submit');
+	await page.waitForSelector('#overlays form .button.submit')
 	await screenshot(page);
 
 
 
 	// await browser.close();
-	setTimeout(async x => await browser.close(), 1000);
+	setTimeout(async x => await browser.close(), 3000);
 })();
