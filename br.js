@@ -2,21 +2,11 @@ const cfg = require('./env.js');
 const fs = require('fs');
 const puppeteer = require('puppeteer');
 
-function pageUrl(page) {
-	console.log(' => ' + page.url());
-	// console.log('');
-}
-
 var screenshotIndex = 0;
-async function screenshot(page) {
+function screenshot(page) {
 	const name = 'x' + (++screenshotIndex) + '.png';
-	console.log(name);
-	await page.screenshot({path: name});
-}
-
-async function pageContent(page) {
-	var html = await page.content();
-	console.log(html);
+	console.log('[screenshot] ' + name);
+	return page.screenshot({path: name});
 }
 
 async function waitForAjax(page, async) {
@@ -48,24 +38,8 @@ async function waitForAjax(page, async) {
 	});
 
 	page.on('load', async () => {
-		console.log('[load] ' + page.url());
-		// await screenshot(page);
+		console.log('[loaded] ' + page.url());
 	});
-
-	// page.on('framenavigated', frame => {
-	// 	if (frame == page.mainFrame()) {
-	// 		setTimeout(() => {
-	// 			console.log(frame.url());
-	// 			screenshot(page);
-	// 		}, 100);
-	// 	}
-	// });
-
-	// page.on('response', rsp => {
-	// 	// screenshot(page);
-	// 	// console.log('  => ' + rsp.request().url);
-	// 	// console.log('');
-	// });
 
 	await page.goto(cfg.baseUrl);
 	await screenshot(page);
@@ -81,26 +55,30 @@ async function waitForAjax(page, async) {
 	await page.goto(cfg.baseUrl + 'blockreservations');
 	await screenshot(page);
 
-	var el = await page.$('a[href="/blockreservations/new"]');
-	await page.evaluate(el => el.click(), el);
+	await page.click('button.menu-toggler-label');
+	await screenshot(page);
+
+	await page.click('a[href="/blockreservations/new"]');
 	await page.waitForNavigation();
 	await screenshot(page);
 
 	await page.select('[name="resource_id"]', '25');
 	await page.select('[name="on_day"]', '2');
-	await page.waitForSelector('#ajax_loading', {hidden: true});
+	await waitForAjax(page, false);
 	await screenshot(page);
 
-	await page.select('[name="start_time"]', '20:00');
-	await page.select('[name="end_time"]', '21:00');
+	await page.select('[name="start_time"]', '10:30');
+	await page.select('[name="end_time"]', '11:30');
 	await waitForAjax(page, false);
 	await screenshot(page);
 
 	await page.type('#pplayer1 .ms-txt', 'gree');
+	// await screenshot(page);
 	await waitForAjax(page, true);
 	await screenshot(page);
 
 	await page.type('#pplayer2 .ms-txt', 'geer');
+	// await screenshot(page);
 	await waitForAjax(page, true);
 	await screenshot(page);
 
