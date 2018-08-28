@@ -41,7 +41,7 @@ async function waitForAjax(page, async) {
 		console.log('[loaded] ' + page.url());
 	});
 
-	await page.goto(cfg.baseUrl);
+	await page.goto(cfg.brBaseUrl);
 	await screenshot(page);
 
 	await page.type('input[name="username"]', 'personeel');
@@ -52,7 +52,7 @@ async function waitForAjax(page, async) {
 	await page.waitForNavigation();
 	await screenshot(page);
 
-	await page.goto(cfg.baseUrl + 'blockreservations');
+	await page.goto(cfg.brBaseUrl + 'blockreservations');
 	await screenshot(page);
 
 	await page.click('button.menu-toggler-label');
